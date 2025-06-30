@@ -3,6 +3,6 @@ import { adController } from '../controllers/adController';
 
 const router = Router();
 
-router.post('/detect-ads', adController.detectAds);
+router.post('/detect', adController.detectAds);
 
 export default router;

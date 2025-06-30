@@ -47,7 +47,13 @@ The JSON should contain an array of \`adTimestamps\` objects. Each \`adTimestamp
 * **Merge Consecutive Ads:** If multiple advertisement subtitles appear consecutively, or if there are only a few non-ad subtitles (e.g., 1-2 short lines) between clear ad segments, merge them into a single \`adTimestamps\` object.
 * **No Overlap/Identical Times:** Ensure that no \`adTimestamps\` objects have identical start and end times, or overlapping time ranges.
 * **Small Gaps Included:** If a small number of non-advertising subtitles appear between two clear advertising segments, treat the entire duration as one consolidated advertisement block.
-* **No Ads**：If no ads, only return \`[]\`.`,
+* **No Ads**：If no ads, only return \`[]\`.
+
+**Example JSON Output**
+
+\`\`\`json
+[{"start":10,"end":45,"description":"广告时间: 00:10 - 00:45","confidence":0.9},{"start":120,"end":180,"description":"广告时间: 02:00 - 03:00","confidence":0.8}]
+\`\`\``,
                     },
                 ]
         },
