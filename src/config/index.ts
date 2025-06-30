@@ -7,7 +7,7 @@ export const config = {
     port: parseInt(process.env.PORT || '3000', 10),
     cors: {
         origin: (process.env.CORS_ORIGINS || 'http://localhost:8080,https://www.bilibili.com').split(','),
-        methods: ['POST'],
+        methods: ['POST', 'GET', 'OPTIONS'],
     },
     gemini: {
         apiKey: process.env.GEMINI_API_KEY || '',

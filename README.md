@@ -11,7 +11,12 @@
 </div>
 
 ## 📖 简介
-Bilibili 广告跳过工具的后端实现，提供了一个简单的 API 接口，供扩展使用。
+
+Bilibili 广告跳过工具的私有部署后端实现，提供了精简的 API 接口，供扩展使用。
+
+本项目使用 Google Gemini API 依赖于提示词工程进行广告识别，使用 TypeScript 编写，基于 Node.js 和 Express 框架。
+
+本项目 API 仅支援扩展的核心功能，统计信息等功能不可用。
 
 ## 🚀 快速开始
 ### 1. 克隆仓库
@@ -52,7 +57,7 @@ npm start
 ```
 
 ## 📄 API 文档
-### `/api/detect-ads`
+### `/api/detect`
 #### 请求
 
 ```http
@@ -62,42 +67,21 @@ Content-Type: application/json
 
 #### 请求体
 
-| 字段名称                                      | 类型      | 描述              |
-|:------------------------------------------|:--------|:----------------|
-| `videoId`                                 | String  | 视频 BVID         |
-| `title`                                   | String  | 视频标题            |
-| `uploader`                                | String  | UP 主名称          |
-| `mid`                                     | Number  | UP 主 UID        |
-| `duration`                                | Number  | 视频总时长，单位秒       |
-| `autoDetect`                              | Boolean | 是否自动检测          |
-| `clientVersion`                           | String  | 客户端版本号          |
-| `videoData`                               | Object  | 【必须】视频的详细数据     |
-| `videoData.bvid`                          | String  | 【必须】视频 BVID     |
-| `videoData.title`                         | String  | 【必须】视频标题        |
-| `videoData.owner`                         | Object  | UP 主信息          |
-| `videoData.owner.mid`                     | Number  | UP 主 UID        |
-| `videoData.owner.name`                    | String  | UP 主名称          |
-| `videoData.owner.face`                    | String  | UP 主头像 URL      |
-| `videoData.mid`                           | Number  | UP 主 UID        |
-| `videoData.desc`                          | String  | 视频的描述           |
-| `videoData.dynamic`                       | String  | 视频动态信息          |
-| `videoData.duration`                      | Number  | 视频总时长           |
-| `videoData.pages`                         | Array   | 视频的分 P 信息数组     |
-| `videoData.pubdate`                       | Number  | 发布日期时间戳         |
-| `videoData.dimension`                     | Object  | 视频尺寸            |
-| `videoData.subtitle`                      | Object  | 字幕信息            |
-| `videoData.subtitle.allow_submit`         | Boolean | 是否允许提交字幕        |
-| `videoData.subtitle.list`                 | Array   | 字幕列表数组          |
-| `videoData.hasSubtitle`                   | Boolean | 是否有字幕           |
-| `videoData.epid`                          | String  | EPID            |
-| `videoData.subtitle_contents`             | Array   | 【必须】字幕内容数组      |
-| `videoData.subtitle_contents[][]`         | Array   | 【必须】包含多个字幕片段的数组 |
-| `videoData.subtitle_contents[][].from`    | Number  | 【必须】字幕开始时间      |
-| `videoData.subtitle_contents[][].content` | String  | 【必须】字幕文本内容      |
-| `user`                                    | Object  | 【必须】用户信息        |
-| `user.username`                           | String  | 【必须】用户名         |
-| `user.uid`                                | Number  | 【必须】UID         |
-| `user.level`                              | Number  | 【必须】用户等级        |
+*此处仅列出必要字段*
+
+| 字段名称                                      | 类型     | 描述          |
+|:------------------------------------------|:-------|:------------|
+| `videoData`                               | Object | 视频的详细数据     |
+| `videoData.bvid`                          | String | 视频 BVID     |
+| `videoData.title`                         | String | 视频标题        |
+| `videoData.subtitle_contents`             | Array  | 字幕内容数组      |
+| `videoData.subtitle_contents[][]`         | Array  | 包含多个字幕片段的数组 |
+| `videoData.subtitle_contents[][].from`    | Number | 字幕开始时间      |
+| `videoData.subtitle_contents[][].content` | String | 字幕文本内容      |
+| `user`                                    | Object | 用户信息        |
+| `user.username`                           | String | 用户名         |
+| `user.uid`                                | Number | UID         |
+| `user.level`                              | Number | 用户等级        |
 
 #### 响应
 
@@ -116,6 +100,69 @@ Content-Type: application/json
 | `confidence`                                | Number  | 整体置信度         |
 | `fromCache`                                 | Boolean | 结果是否来自缓存      |
 | `requestId`                                 | String  | 唯一标识符         |
+
+### `/api/user/stats`
+#### 请求
+
+```http
+POST /api/user/stats
+Content-Type: application/json
+```
+
+#### 请求体
+
+| 字段名称                 | 类型     | 描述            |
+|:---------------------|:-------|:--------------|
+| `username`           | String | 用户名           |
+| `uid`                | Number | 用户 UID        |
+| `level`              | Number | 用户等级          |
+| `vipType`            | Number | VIP 类型        |
+| `vipDueDate`         | Number | VIP 到期时间戳（毫秒） |
+| `local_popup_opens`  | Number | 本地弹窗打开次数      |
+| `local_share_clicks` | Number | 本地分享点击次数      |
+
+#### 响应
+
+| 字段名称                                     | 类型      | 描述                |
+|:-----------------------------------------|:--------|:------------------|
+| `uid`                                    | Number  | 用户 UID            |
+| `bili_level`                             | Number  | 用户等级              |
+| `account_type`                           | Number  | 账号类型              |
+| `account_type_display`                   | String  | 账号类型显示文本          |
+| `vip_type`                               | Number  | 大会员类型             |
+| `vip_due_date`                           | String  | 大会员到期时间           |
+| `is_vip_active`                          | Boolean | 大会员是否有效           |
+| `is_in_trial_period`                     | Boolean | 是否在试用期            |
+| `trial_end_date`                         | String  | 试用期结束日期           |
+| `base_limit_from_level`                  | Number  | 基础请求限制            |
+| `trial_bonus`                            | Number  | 试用期奖励次数           |
+| `vip_bonus`                              | Number  | 大会员奖励次数           |
+| `daily_gemini_requests_used`             | Number  | 今日已使用的 Gemini 请求数 |
+| `daily_gemini_limit`                     | Number  | 今日 Gemini 请求限制    |
+| `total_videos_processed`                 | Number  | 处理的视频总数           |
+| `total_video_duration_processed_display` | String  | 处理的视频总时长          |
+| `total_ads_duration_display`             | String  | 处理的广告总时长          |
+| `total_videos_with_ads`                  | Number  | 包含广告的视频总数         |
+| `local_popup_opens`                      | Number  | 本地弹窗打开次数          |
+| `local_share_clicks`                     | Number  | 本地分享点击次数          |
+| `message`                                | String  | 响应消息              |
+
+### `/api/getSupportPicUrl`
+#### 请求
+
+```http
+GET /api/getSupportPicUrl
+```
+
+#### 响应
+
+| 字段名称            | 类型      | 描述        |
+|:----------------|:--------|:----------|
+| `supportPicUrl` | String  | 支持图片的 URL |
+| `title`         | String  | 标题        |
+| `description`   | String  | 图片描述      |
+| `altText`       | String  | 图片替代文本    |
+| `enabled`       | Boolean | 是否启用      |
 
 ## 📜 开源许可
 
