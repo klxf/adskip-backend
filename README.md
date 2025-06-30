@@ -5,7 +5,7 @@
 **适用于[切片广告之友](https://github.com/OtokoNoIzumi/adskip)扩展的后端实现**
 
 [![GitHub stars](https://img.shields.io/github/stars/klxf/adskip-backend?colHub%20Stor=yellow&label=Gitars)](https://github.com/klxf/adskip-backend/stargazers)
-[![GitHub license](https://img.shields.io/github/license/klxf/adskip-backend?color=blue)](https://github.com/klxf/adskip-backend/blob/main/LICENSE)
+[![GitHub license](https://img.shields.io/github/license/klxf/adskip-backend?color=blue)](https://github.com/klxf/adskip-backend/blob/main/LICENSE.md)
 [![GitHub last commit](https://img.shields.io/github/last-commit/klxf/adskip-backend)](https://github.com/klxf/adskip-backend/commits)
 
 </div>
@@ -116,3 +116,9 @@ Content-Type: application/json
 | `confidence`                                | Number  | 整体置信度         |
 | `fromCache`                                 | Boolean | 结果是否来自缓存      |
 | `requestId`                                 | String  | 唯一标识符         |
+
+## 📜 开源许可
+
+本项目使用 [MIT License](https://choosealicense.com/licenses/mit/) 许可协议开源
+
+本项目使用了 [:octocat: GitHub Copilot](https://github.com/copilot) 辅助开发
