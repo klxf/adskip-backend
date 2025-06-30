@@ -23,7 +23,7 @@ export const adController = {
                 hasAds: geminiResponse && geminiResponse.length > 0,
                 adTimestamps: geminiResponse || [],
                 message: 'Ad detection completed successfully.',
-                confidence: geminiResponse ? geminiResponse.reduce((sum: any, ad: { confidence: any; }) => sum + (ad.confidence || 0), 0) / (geminiResponse.length || 1) : 0,
+                confidence: geminiResponse && geminiResponse.length > 0 ? geminiResponse.reduce((sum: any, ad: { confidence: any; }) => sum + (ad.confidence || 0), 0) / (geminiResponse.length || 1) : 0,
                 fromCache: false,
                 requestId: videoData.bvid + '-' + new Date().getTime(),
             }
