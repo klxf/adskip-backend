@@ -1,28 +1,6 @@
-import dotenv from 'dotenv';
+# Subtitle Ad Detection and Extraction Prompt
 
-dotenv.config();
-
-export const config = {
-    geminiApiKey: process.env.GEMINI_API_KEY as string,
-    port: parseInt(process.env.PORT || '3000', 10),
-    cors: {
-        origin: (process.env.CORS_ORIGINS || 'http://localhost:8080,https://www.bilibili.com').split(','),
-        methods: ['POST'],
-    },
-    gemini: {
-        apiKey: process.env.GEMINI_API_KEY || '',
-        apiHost: process.env.GEMINI_API_HOST || 'https://generativelanguage.googleapis.com',
-        model: process.env.GEMINI_MODEL || 'gemini-2.0-flash',
-        generationConfig: {
-            temperature: 0.25,
-            topP: 1,
-            responseMimeType: 'application/json',
-        },
-        systemInstruction: {
-            parts:
-                [
-                    {
-                        text: `You are a professional subtitle reviewer. Your task is to identify advertising segments within JSON-formatted subtitles.
+You are a professional subtitle reviewer. Your task is to identify advertising segments within JSON-formatted subtitles.
 
 **Here's how to define and identify an advertisement:**
 
@@ -47,37 +25,4 @@ The JSON should contain an array of \`adTimestamps\` objects. Each \`adTimestamp
 * **Merge Consecutive Ads:** If multiple advertisement subtitles appear consecutively, or if there are only a few non-ad subtitles (e.g., 1-2 short lines) between clear ad segments, merge them into a single \`adTimestamps\` object.
 * **No Overlap/Identical Times:** Ensure that no \`adTimestamps\` objects have identical start and end times, or overlapping time ranges.
 * **Small Gaps Included:** If a small number of non-advertising subtitles appear between two clear advertising segments, treat the entire duration as one consolidated advertisement block.
-* **No Ads**：If no ads, only return \`[]\`.`,
-                    },
-                ]
-        },
-        responseSchema: {
-            type: 'OBJECT',
-            required: ["adTimestamps"],
-            properties: {
-                adTimestamps: {
-                    type: 'ARRAY',
-                    items: {
-                        type: 'OBJECT',
-                        required: ["start", "end", "description", "confidence"],
-                        properties: {
-                            start: {
-                                type: 'NUMBER',
-                            },
-                            end: {
-                                type: 'NUMBER',
-                            },
-                            description: {
-                                type: 'STRING',
-                            },
-                            confidence: {
-                                type: 'NUMBER',
-                            },
-                        },
-                    },
-                },
-            },
-        },
-        customHeaders: (process.env.CUSTOM_HEADERS ? JSON.parse(process.env.CUSTOM_HEADERS) : {}) as Record<string, string>,
-    },
-};
+* **No Ads**：If no ads, only return \`[]\`.
