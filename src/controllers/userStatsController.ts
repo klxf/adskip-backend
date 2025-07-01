@@ -23,7 +23,7 @@ export const userStatsController = {
                 total_videos_processed: 0,
                 total_video_duration_processed_display: "00:00:00",
                 total_ads_duration_display: "私有部署暂不支持",
-                total_videos_with_ads: 0,
+                total_videos_with_ads: 10,
                 local_popup_opens: local_popup_opens,
                 local_share_clicks: local_share_clicks,
                 message: '获取成功'
