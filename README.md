@@ -36,11 +36,19 @@ npm install
 
 ```dotenv
 # .env.example
+# 定义 Gmini API Host
 GEMINI_API_HOST=https://generativelanguage.googleapis.com
+# Gemini API Key
 GEMINI_API_KEY=YOUR_GEMINI_API_KEY
+# 最大请求体大小
+BODY_LIMIT=100kb
+# 服务端口号
 PORT=3000
-CORS_ORIGINS=http://localhost:8080,https://www.bilibili.com
 
+# CORS 配置
+CORS_ORIGINS=http://localhost:8080,https://www.bilibili.com,extension://dicbndgaokkkafcehlfmkllbipeekfhi
+
+# Google Gemini 模型配置
 GEMINI_MODEL=gemini-2.0-flash
 GEMINI_TEMPERATURE=0.25
 GEMINI_TOP_P=1

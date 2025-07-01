@@ -5,6 +5,7 @@ dotenv.config();
 export const config = {
     geminiApiKey: process.env.GEMINI_API_KEY as string,
     port: parseInt(process.env.PORT || '3000', 10),
+    bodyLimit: process.env.BODY_LIMIT || '100kb',
     cors: {
         origin: (process.env.CORS_ORIGINS || 'http://localhost:8080,https://www.bilibili.com').split(','),
         methods: ['POST', 'GET', 'OPTIONS'],

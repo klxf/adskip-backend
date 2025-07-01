@@ -1,6 +1,6 @@
 {
   "name": "ad-detector-backend",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "main": "dist/app.js",
   "scripts": {
@@ -9,8 +9,8 @@
     "dev": "tsc && node dist/app.js"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "Fang Zhijian",
+  "license": "MIT",
   "dependencies": {
     "@types/express": "^5.0.3",
     "@types/node": "^24.0.7",
