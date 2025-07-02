@@ -155,6 +155,14 @@ Content-Type: application/json
 | `total_video_duration_processed_display` | String  | 处理的视频总时长          |
 | `total_ads_duration_display`             | String  | 处理的广告总时长          |
 | `total_videos_with_ads`                  | Number  | 包含广告的视频总数         |
+| `usage_info`                             | Array   | 包含各项权益详情的数组       |
+| `usage_info[].id`                        | Number  | 权益的唯一标识符          |
+| `usage_info[].description`               | String  | 权益的描述             |
+| `usage_info[].current_value`             | Number  | 当前值               |
+| `usage_info[].max_value`                 | Number  | 最大值               |
+| `usage_info[].container_id`              | String  | 权益所属容器的唯一标识符      |
+| `usage_info[].container_description`     | String  | 权益所属容器的描述         |
+| `usage_info[].show_in_summary`           | Boolean | 该权益是否外显           |
 | `local_popup_opens`                      | Number  | 本地弹窗打开次数          |
 | `local_share_clicks`                     | Number  | 本地分享点击次数          |
 | `message`                                | String  | 响应消息              |
