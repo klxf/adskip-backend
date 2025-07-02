@@ -14,7 +14,7 @@ export const userStatsController = {
                 vip_due_date: new Date(vipDueDate ? vipDueDate : 0).toISOString(),
                 is_vip_active: (vipType ? vipType : 0) !== 0 && new Date(vipDueDate ? vipDueDate : 0) > new Date(),
                 is_in_trial_period: true,
-                trial_end_date: '2099-12-31',
+                trial_end_date: null,
                 base_limit_from_level: 999,
                 trial_bonus: 0,
                 vip_bonus: 0,
