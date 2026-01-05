@@ -2,13 +2,12 @@ import axios, { AxiosRequestConfig } from 'axios';
 import { config } from '../config';
 
 class GeminiService {
-    private apiKey: string;
-    private apiHost: string;
-    private model: string;
-    private generationConfig: typeof config.gemini.generationConfig;
-    private systemInstruction: typeof config.gemini.systemInstruction;
-    private responseSchema: typeof config.gemini.responseSchema;
-    private customHeaders: Record<string, string> | undefined;
+    private readonly apiKey: string;
+    private readonly apiHost: string;
+    private readonly model: string;
+    private readonly generationConfig: typeof config.gemini.generationConfig;
+    private readonly systemInstruction: typeof config.gemini.systemInstruction;
+    private readonly customHeaders: Record<string, string> | undefined;
 
     constructor() {
         this.apiKey = config.gemini.apiKey;
@@ -16,7 +15,6 @@ class GeminiService {
         this.model = config.gemini.model;
         this.generationConfig = config.gemini.generationConfig;
         this.systemInstruction = config.gemini.systemInstruction;
-        this.responseSchema = config.gemini.responseSchema;
         this.customHeaders = config.gemini.customHeaders || {};
     }
 
@@ -41,17 +39,6 @@ class GeminiService {
             ],
             generationConfig: this.generationConfig,
             systemInstruction: this.systemInstruction,
-            tools: [
-                {
-                    functionDeclarations: [
-                        {
-                            name: "extractAdTimestamps",
-                            description: "Extracts ad timestamps and descriptions from subtitle contents.",
-                            parameters: this.responseSchema
-                        }
-                    ]
-                }
-            ]
         };
 
         const headers: Record<string, string> = {

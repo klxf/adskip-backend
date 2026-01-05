@@ -1,6 +1,6 @@
 {
   "name": "ad-detector-backend",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "description": "",
   "main": "dist/app.js",
   "scripts": {
@@ -16,7 +16,9 @@
     "@types/node": "^24.0.7",
     "axios": "^1.10.0",
     "cors": "^2.8.5",
-    "dotenv": "^17.0.0"
+    "dotenv": "^17.0.0",
+    "sqlite": "^5.1.1",
+    "sqlite3": "^5.1.7"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",

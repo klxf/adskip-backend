@@ -18,6 +18,33 @@ export const config = {
             temperature: 0.25,
             topP: 1,
             responseMimeType: 'application/json',
+            responseSchema: {
+                type: "object",
+                properties: {
+                    adTimestamps: {
+                        type: "array",
+                        items: {
+                            type: "object",
+                            properties: {
+                                start: {
+                                    type: "number"
+                                },
+                                end: {
+                                    "type": "number"
+                                },
+                                description: {
+                                    type: "string"
+                                },
+                                confidence: {
+                                    type: "number"
+                                }
+                            },
+                            required: ["start", "end", "description", "confidence"]
+                        }
+                    }
+                },
+                required: ["adTimestamps"]
+            },
         },
         systemInstruction: {
             parts:
@@ -57,33 +84,6 @@ The JSON should contain an array of \`adTimestamps\` objects. Each \`adTimestamp
 \`\`\``,
                     },
                 ]
-        },
-        responseSchema: {
-            type: 'OBJECT',
-            required: ["adTimestamps"],
-            properties: {
-                adTimestamps: {
-                    type: 'ARRAY',
-                    items: {
-                        type: 'OBJECT',
-                        required: ["start", "end", "description", "confidence"],
-                        properties: {
-                            start: {
-                                type: 'NUMBER',
-                            },
-                            end: {
-                                type: 'NUMBER',
-                            },
-                            description: {
-                                type: 'STRING',
-                            },
-                            confidence: {
-                                type: 'NUMBER',
-                            },
-                        },
-                    },
-                },
-            },
         },
         customHeaders: (process.env.CUSTOM_HEADERS ? JSON.parse(process.env.CUSTOM_HEADERS) : {}) as Record<string, string>,
     },

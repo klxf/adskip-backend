@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { geminiService } from '../services/geminiService';
+import { getAdCache, saveAdCache } from "../services/dbService";
 
 export const adController = {
     detectAds: async (req: Request, res: Response): Promise<void> => {
@@ -13,21 +14,56 @@ export const adController = {
             return;
         }
 
+        try {
+            const cachedResult = await getAdCache(videoData.bvid);
+            if (cachedResult) {
+                const DetectedResult = {
+                    success: true,
+                    videoId: cachedResult.videoId,
+                    hasAds: cachedResult.has_ads === 1,
+                    adTimestamps: cachedResult.adTimestamps,
+                    message: 'Ad detection result retrieved from cache.',
+                    confidence: cachedResult.adTimestamps && cachedResult.adTimestamps.length > 0 ? cachedResult.adTimestamps.reduce((sum: any, ad: { confidence: any; }) => sum + (ad.confidence || 0), 0) / (cachedResult.adTimestamps.length || 1) : 0,
+                    fromCache: true,
+                    requestId: videoData.bvid + '-' + new Date().getTime(),
+                };
+                console.log(DetectedResult.videoId, '[Cache hit]', DetectedResult.hasAds ? '[Ads detected]' : '[No ads detected]');
+                res.status(200).json(DetectedResult);
+                return;
+            }
+        } catch (e) {
+            console.error('Error checking cache for video:', videoData.bvid, e);
+        }
+
         const subtitleContents = JSON.stringify(videoData.subtitle_contents);
 
         try {
             const geminiResponse = await geminiService.getAdTimestamps(subtitleContents);
+            const adTimestamps = geminiResponse && geminiResponse.adTimestamps ? geminiResponse.adTimestamps : [];
             const DetectedResult = {
                 success: true,
                 videoId: videoData.bvid,
-                hasAds: geminiResponse && geminiResponse.length > 0,
-                adTimestamps: geminiResponse || [],
+                hasAds: adTimestamps && adTimestamps.length > 0,
+                adTimestamps: adTimestamps || [],
                 message: 'Ad detection completed successfully.',
-                confidence: geminiResponse && geminiResponse.length > 0 ? geminiResponse.reduce((sum: any, ad: { confidence: any; }) => sum + (ad.confidence || 0), 0) / (geminiResponse.length || 1) : 0,
+                confidence: adTimestamps && adTimestamps.length > 0 ? adTimestamps.reduce((sum: any, ad: { confidence: any; }) => sum + (ad.confidence || 0), 0) / (geminiResponse.length || 1) : 0,
                 fromCache: false,
                 requestId: videoData.bvid + '-' + new Date().getTime(),
             }
             console.log(DetectedResult.requestId, DetectedResult.hasAds ? '[Ads detected]' : '[No ads detected]');
+
+            try {
+                saveAdCache(videoData.bvid, user.uid, DetectedResult.hasAds, DetectedResult.adTimestamps)
+                    .then(() => {
+                        console.log(videoData.bvid, 'cached!');
+                    })
+                    .catch(err => {
+                        console.error('Error caching ad detection result for video:', videoData.bvid, err);
+                    })
+            } catch (e) {
+                console.error('Error saving to cache for video:', videoData.bvid, e);
+            }
+
             res.status(200).json(DetectedResult);
             return;
         } catch (error: any) {

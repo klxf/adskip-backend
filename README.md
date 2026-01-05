@@ -14,7 +14,7 @@
 
 Bilibili 广告跳过工具的私有部署后端实现，提供了精简的 API 接口，供扩展使用。
 
-本项目使用 Google Gemini API 依赖于提示词工程进行广告识别，使用 TypeScript 编写，基于 Node.js 和 Express 框架。
+本项目使用 Google Gemini API 依赖于提示词工程进行广告识别，使用 TypeScript 编写，基于 Node.js 和 Express 框架，使用 SQLite 存储缓存数据，节省 Token 消耗。
 
 本项目 API 仅支援扩展的核心功能，统计信息等功能不可用。
 
@@ -183,6 +183,18 @@ GET /api/getSupportPicUrl
 | `description`   | String  | 图片描述      |
 | `altText`       | String  | 图片替代文本    |
 | `enabled`       | Boolean | 是否启用      |
+
+## 🔣 数据缓存
+
+为了提升响应速度，本项目使用 SQLite 数据库对广告检测结果进行缓存：
+
+| 字段名称            | 类型       | 描述             |
+|:----------------|:---------|:---------------|
+| `bvid`          | TEXT     | 视频 BVID        |
+| `uid`           | TEXT     | 用户 UID         |
+| `has_ads`       | INTEGER  | 是否包含广告         |
+| `ad_timestamps` | TEXT     | 广告时间戳 JSON 字符串 |
+| `created_at`    | DATETIME | 记录创建时间         |
 
 ## 📜 开源许可
 
