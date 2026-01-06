@@ -6,12 +6,13 @@ import apiRoutes from './routes';
 const app = express();
 
 app.use(cors(config.cors));
-app.use(express.json({ limit: '128kb' }));
+app.use(express.json({ limit: config.bodyLimit }));
+app.use(express.urlencoded({ extended: true, limit: config.bodyLimit }));
 
 app.use('/api', apiRoutes);
 
 app.get('/', (req, res) => {
-    res.send('Ad Detector Backend is running!');
+    res.send('adskip backend is running!');
 });
 
 app.listen(config.port, () => {

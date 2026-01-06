@@ -5,7 +5,7 @@
 **适用于[切片广告之友](https://github.com/OtokoNoIzumi/adskip)扩展的后端实现**
 
 [![GitHub stars](https://img.shields.io/github/stars/klxf/adskip-backend?colHub%20Stor=yellow&label=Gitars)](https://github.com/klxf/adskip-backend/stargazers)
-[![GitHub license](https://img.shields.io/github/license/klxf/adskip-backend?color=blue)](https://github.com/klxf/adskip-backend/blob/main/LICENSE.md)
+[![GitHub license](https://img.shields.io/github/license/klxf/adskip-backend?color=blue)](https://github.com/klxf/adskip-backend/blob/master/LICENSE.md)
 [![GitHub last commit](https://img.shields.io/github/last-commit/klxf/adskip-backend)](https://github.com/klxf/adskip-backend/commits)
 
 </div>
@@ -186,7 +186,7 @@ GET /api/getSupportPicUrl
 
 ## 🔣 数据缓存
 
-为了提升响应速度，本项目使用 SQLite 数据库对广告检测结果进行缓存：
+为了在多用户场景下提升响应速度、节约 Token，本项目使用 SQLite 数据库对广告检测结果进行缓存：
 
 | 字段名称            | 类型       | 描述             |
 |:----------------|:---------|:---------------|

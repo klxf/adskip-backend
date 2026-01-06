@@ -23,7 +23,7 @@ export const userStatsController = {
                 total_videos_processed: 0,
                 total_video_duration_processed_display: "00:00:00",
                 total_ads_duration_display: "私有部署暂不支持",
-                total_videos_with_ads: 10,
+                total_videos_with_ads: "0",
                 usage_info: [
                     {
                         id: -1,

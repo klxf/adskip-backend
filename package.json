@@ -1,6 +1,6 @@
 {
-  "name": "ad-detector-backend",
-  "version": "2.0.0",
+  "name": "adskip-backend",
+  "version": "2.0.1",
   "description": "",
   "main": "dist/app.js",
   "scripts": {

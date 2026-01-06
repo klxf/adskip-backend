@@ -27,7 +27,7 @@ export const adController = {
                     fromCache: true,
                     requestId: videoData.bvid + '-' + new Date().getTime(),
                 };
-                console.log(DetectedResult.videoId, '[Cache hit]', DetectedResult.hasAds ? '[Ads detected]' : '[No ads detected]');
+                console.log(DetectedResult.requestId, '[Cache hit]', DetectedResult.hasAds ? '[Ads detected]' : '[No ads detected]');
                 res.status(200).json(DetectedResult);
                 return;
             }
@@ -54,9 +54,6 @@ export const adController = {
 
             try {
                 saveAdCache(videoData.bvid, user.uid, DetectedResult.hasAds, DetectedResult.adTimestamps)
-                    .then(() => {
-                        console.log(videoData.bvid, 'cached!');
-                    })
                     .catch(err => {
                         console.error('Error caching ad detection result for video:', videoData.bvid, err);
                     })
