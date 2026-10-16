@@ -1,6 +1,17 @@
 import axios, { AxiosRequestConfig } from 'axios';
 import { config } from '../config';
 
+export interface AdTimestamp {
+    start: number;
+    end: number;
+    description: string;
+    confidence: number;
+}
+
+export interface GeminiAdDetectionResult {
+    adTimestamps: AdTimestamp[];
+}
+
 class GeminiService {
     private readonly apiKey: string;
     private readonly apiHost: string;
@@ -23,7 +34,7 @@ class GeminiService {
      * @param subtitleContents 字幕内容，JSON 字符串格式
      * @returns Gemini API 返回的数据
      */
-    async getAdTimestamps(subtitleContents: string): Promise<any> {
+    async getAdTimestamps(subtitleContents: string): Promise<GeminiAdDetectionResult> {
         const url = `${this.apiHost}/v1beta/models/${this.model}:generateContent?key=${this.apiKey}`;
 
         const requestBody = {
@@ -56,22 +67,9 @@ class GeminiService {
             headers: headers,
         };
 
+        let response;
         try {
-            const response = await axios(axiosConfig);
-            const geminiData = response.data;
-
-            if (geminiData && geminiData.candidates && geminiData.candidates.length > 0) {
-                const textPart = geminiData.candidates[0].content.parts[0].text;
-                try {
-                    return JSON.parse(textPart);
-                } catch (parseError) {
-                    console.warn('Gemini response is not a valid JSON string, returning raw text:', textPart);
-                    return { rawResponse: textPart };
-                }
-            } else {
-                console.warn('Unexpected Gemini response structure:', geminiData);
-                return { error: 'Unexpected Gemini response structure', data: geminiData };
-            }
+            response = await axios(axiosConfig);
         } catch (error: any) {
             console.error('Error calling Gemini API:', error.message);
             if (error.response) {
@@ -85,6 +83,40 @@ class GeminiService {
             }
             throw new Error(`Failed to get data from Gemini API: ${error.message}`);
         }
+
+        const geminiData = response.data;
+
+        if (!geminiData?.candidates?.length) {
+            console.warn('Unexpected Gemini response structure:', geminiData);
+            throw new Error('Gemini API returned no candidates');
+        }
+
+        const textPart = geminiData.candidates[0].content.parts
+            .filter((part: any) => !part.thought)
+            .map((part: any) => part.text)
+            .join();
+
+        let parsedResult: GeminiAdDetectionResult;
+        try {
+            parsedResult = JSON.parse(textPart);
+        } catch (parseError) {
+            console.warn('Gemini response is not a valid JSON string:', textPart);
+            throw new Error('Gemini API returned invalid JSON');
+        }
+
+        if (!parsedResult || !Array.isArray(parsedResult.adTimestamps)) {
+            throw new Error('Gemini API response is missing the adTimestamps array');
+        }
+
+        for (let i = 0; i < parsedResult.adTimestamps.length; i++) {
+            const ad = parsedResult.adTimestamps[i];
+            if (!ad || typeof ad.start !== 'number' || typeof ad.end !== 'number' ||
+                typeof ad.description !== 'string' || typeof ad.confidence !== 'number') {
+                throw new Error(`Gemini API response contains an invalid adTimestamp at index ${i}`);
+            }
+        }
+
+        return parsedResult;
     }
 }
 

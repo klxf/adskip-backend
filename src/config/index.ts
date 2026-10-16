@@ -17,6 +17,9 @@ export const config = {
         generationConfig: {
             temperature: 0.25,
             topP: 1,
+            thinkingConfig: {
+                includeThoughts: false,
+            },
             responseMimeType: 'application/json',
             responseSchema: {
                 type: "object",

@@ -1,13 +1,13 @@
 import { Request, Response } from 'express';
-import { geminiService } from '../services/geminiService';
+import { AdTimestamp, geminiService } from '../services/geminiService';
 import { getAdCache, saveAdCache } from "../services/dbService";
 
 export const adController = {
     detectAds: async (req: Request, res: Response): Promise<void> => {
         const { videoData, user } = req.body;
 
-        console.log('Bilibili User: ' + user.username + ' (' + user.uid + ')');
-        console.log('Video:', videoData.bvid, videoData.title);
+        console.log('Bilibili User: ' + user?.username + ' (' + user?.uid + ')');
+        console.log('Video:', videoData?.bvid, videoData?.title);
 
         if (!videoData || !videoData.subtitle_contents) {
             res.status(400).json({ error: 'Missing videoData or subtitle_contents in request body.' });
@@ -39,24 +39,23 @@ export const adController = {
 
         try {
             const geminiResponse = await geminiService.getAdTimestamps(subtitleContents);
-            const adTimestamps = geminiResponse && geminiResponse.adTimestamps ? geminiResponse.adTimestamps : [];
+            const adTimestamps: AdTimestamp[] = geminiResponse.adTimestamps;
             const DetectedResult = {
                 success: true,
                 videoId: videoData.bvid,
                 hasAds: adTimestamps && adTimestamps.length > 0,
                 adTimestamps: adTimestamps || [],
                 message: 'Ad detection completed successfully.',
-                confidence: adTimestamps && adTimestamps.length > 0 ? adTimestamps.reduce((sum: any, ad: { confidence: any; }) => sum + (ad.confidence || 0), 0) / (geminiResponse.length || 1) : 0,
+                confidence:
+                    adTimestamps.length > 0
+                        ? adTimestamps.reduce((sum, ad) => sum + ad.confidence, 0) / adTimestamps.length : 0,
                 fromCache: false,
                 requestId: videoData.bvid + '-' + new Date().getTime(),
             }
             console.log(DetectedResult.requestId, DetectedResult.hasAds ? '[Ads detected]' : '[No ads detected]');
 
             try {
-                saveAdCache(videoData.bvid, user.uid, DetectedResult.hasAds, DetectedResult.adTimestamps)
-                    .catch(err => {
-                        console.error('Error caching ad detection result for video:', videoData.bvid, err);
-                    })
+                await saveAdCache(videoData.bvid, user.uid, DetectedResult.hasAds, DetectedResult.adTimestamps);
             } catch (e) {
                 console.error('Error saving to cache for video:', videoData.bvid, e);
             }
@@ -65,7 +64,7 @@ export const adController = {
             return;
         } catch (error: any) {
             console.error('Error in ad detection:', error.message);
-            res.status(500).json({ error: 'Internal server error.', details: error.message });
+            res.status(500).json({ error: 'Internal server error.' });
             return;
         }
     },
